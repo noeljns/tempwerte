@@ -1,6 +1,9 @@
 
 public class Server implements Runnable {
 
+	// stellt TCP Socket API bereit
+	
+	
 	// Connection
 	// CMD
 	
