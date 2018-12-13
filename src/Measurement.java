@@ -22,6 +22,7 @@ public class Measurement {
 	 * @param measurementPoints
 	 */
 	public Measurement(LocalDate date, List<MeasurementPoint> measurementPoints) {
+		// reduziere die gespeicherten Messpunkte auf die des geforderten Datum
 		measurementPointsForGivenDate = getMeasurePointsOfDate(date, measurementPoints);
 	}
 
@@ -33,8 +34,7 @@ public class Measurement {
 	 * @param measurementPoints
 	 * @return Liste mit Messpunkten des geforderten Datums
 	 */
-	private List<MeasurementPoint> getMeasurePointsOfDate(LocalDate date, List<MeasurementPoint> measurementPoints) {
-
+	private List<MeasurementPoint> getMeasurePointsOfDate(LocalDate date, List<MeasurementPoint> measurementPoints) {		
 		Iterator<MeasurementPoint> iterator = measurementPoints.iterator();
 		while(iterator.hasNext()) {
 			// falls gefordertes Datum nicht dem Datum in der Liste entspricht, entferne das MeasurePoint Objekt
@@ -43,19 +43,20 @@ public class Measurement {
 			}
 		
 		}
-		
-		// TEST
-		System.out.println("war in getMeasurePointsOfDate");
-		System.out.println("gefilterte getMeasurePointsOfDate, nur noch mit Messpunkten des Datums");
-		for (MeasurementPoint point : measurementPoints) {
-			System.out.println("Tag: " + point.getDate() + ", Uhrzeit: " + point.getTime() + ", Temperatur: "
-					+ point.getTemperature());
-		}
-		
+				
 		// Liste die nur noch MeasurePoint des geforderten Datums entspricht
 		return measurementPoints;
 	}
 
+	/**
+	 * Methode um Messpunkte des Tages herauszugeben
+	 * 
+	 * @return Messpunkte des Tages
+	 */
+	public List<MeasurementPoint> getMeasurementPointsForGivenDate() {		
+		return this.measurementPointsForGivenDate;
+	}
+	
 	/**
 	 * Methode um Minimum-, Maximum- und Durchschnittstemparatur eines Datums zu
 	 * berechnen
@@ -72,19 +73,9 @@ public class Measurement {
 		return measurement;
 	}
 
-	/**
-	 * Methode um Messpunkte des Tages herauszugeben
-	 * 
-	 * @return Messpunkte des Tages
-	 */
-	public List<MeasurementPoint> getMeasurementPointsForGivenDate() {
-		return this.measurementPointsForGivenDate;
-	}
-
 	private Double getMin() {
 		OptionalDouble minOptional = measurementPointsForGivenDate.stream().mapToDouble(mp -> mp.getTemperature())
 				.min();
-		System.out.println("minOptional");
 		Double min = minOptional.getAsDouble();
 		return min;
 	}

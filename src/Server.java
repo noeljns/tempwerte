@@ -1,4 +1,8 @@
-
+/**
+ * Klasse die einen Server repräsentiert der eine TCP Socket Api bereitstellt
+ * @author jns
+ *
+ */
 public class Server implements Runnable {
 
 	// stellt TCP Socket API bereit

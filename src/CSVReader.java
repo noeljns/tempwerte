@@ -32,8 +32,8 @@ public class CSVReader {
 	 */
 	public List<MeasurementPoint> parseCSV() {
 		try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
-			System.out.println("Wetterinformationen:");
-			String headerLine = reader.readLine();
+			// erste Zeilte einlesen, um sie zu überspringen
+			reader.readLine();
 			
             while ((line = reader.readLine()) != null) {
                 // use semicolon as separator
@@ -46,13 +46,6 @@ public class CSVReader {
             		MeasurementPoint measurementPoint = new MeasurementPoint(date, time, temperature);
             		measurementPoints.add(measurementPoint);
             }
-
-            // TEST:
-//            for(MeasurementPoint point : measurementPoints) {
-//            	System.out.println("Tag: " + point.getDate() 
-//                		+ ", Uhrzeit: " + point.getTime() 
-//                		+ ", Temperatur: " + point.getTemperature());
-//            }
             
             return measurementPoints;
             
