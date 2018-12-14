@@ -9,7 +9,7 @@ import java.util.List;
 public class Main {
 
 	public static void main(String[] args) {
-		// hier wird später nur noch der Server gestartet
+		// hier wird später nur noch der Client und der Server gestartet
 		
 		// das kommt später in den Server
 		CSVReader reader = new CSVReader();
@@ -39,7 +39,7 @@ public class Main {
 
 		// Ausgabe
 		Response response = new Response(measurementPointsForGivenDate, measurements);
-		response.sendResponse();
+		response.getResponse();
        
 	}
 

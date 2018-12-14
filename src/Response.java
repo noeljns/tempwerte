@@ -13,7 +13,7 @@ public class Response {
 		this.measurements = measurements;
 	}
 
-	public void sendResponse() {
+	public void getResponse() {
 		for (MeasurementPoint point : measurementPointsForGivenDate) {
 			System.out.println("Time: " + point.getTime() + ", Temperature: "
 					+ point.getTemperature());
