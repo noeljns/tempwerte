@@ -13,16 +13,25 @@ public class Response {
 		this.measurements = measurements;
 	}
 
-	public void getResponse() {
+	public String getResponse() {
+		StringBuilder stringBuilder = new StringBuilder();
+		
 		for (MeasurementPoint point : measurementPointsForGivenDate) {
-			System.out.println("Time: " + point.getTime() + ", Temperature: "
+			stringBuilder.append("Time: " + point.getTime() + ", Temperature: "
 					+ point.getTemperature());
-		}
+			stringBuilder.append(System.lineSeparator());
 
-		System.out.println("");
-		System.out.println("Minimun: " + Double.toString(measurements.get(0)));
-		System.out.println("Maximum: " + Double.toString(measurements.get(1)));
-		System.out.println("Average: " + Double.toString(measurements.get(2)));
+		}
+		
+		stringBuilder.append(System.lineSeparator());
+		stringBuilder.append("Minimun: " + Double.toString(measurements.get(0)));
+		stringBuilder.append(System.lineSeparator());
+		stringBuilder.append("Maximum: " + Double.toString(measurements.get(1)));
+		stringBuilder.append(System.lineSeparator());
+		stringBuilder.append("Average: " + Double.toString(measurements.get(2)));
+		stringBuilder.append(System.lineSeparator());
+
+		return stringBuilder.toString();
 	}
 
 }
