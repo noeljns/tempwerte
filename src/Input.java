@@ -1,11 +1,6 @@
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
-
-// Input von Client bearbeiten
-// Input: Datum
-// Input: alles andere verboten, dann printen, dass nur Datum genommen wird
 
 /**
  * Klasse um Input zu bearbeiten

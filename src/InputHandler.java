@@ -40,17 +40,17 @@ class InputHandler extends Thread {
 		}
 
 		// TODO mit boolean lösen
-		boolean run = true;
-		while (run) {
+		boolean isRunning = true;
+		while (isRunning) {
 			try {
 				// receive the answer from client
 				String received = dis.readUTF();
 				dos.writeUTF("You asked for weather information about: " + received);
 				//dos.flush();
 
-				run = !"Exit".equals(received);
+				isRunning = !"Exit".equals(received);
 				
-				if (run) {
+				if (isRunning) {
 					// validate input of client
 					LocalDate receivedDate = validateInput(received);
 					

@@ -1,10 +1,6 @@
 import java.util.List;
 
 public class Response {
-	// Exception
-	// String
-	// enthält Measurement und MeasurementPoint des Tages
-
 	private List<MeasurementPoint> measurementPointsForGivenDate;
 	private List<Double> measurements;
 

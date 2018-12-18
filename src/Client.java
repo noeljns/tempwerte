@@ -32,13 +32,13 @@ public class Client implements Runnable {
 
 			// the following loop performs the exchange of
 			// information between client and client handler
-			boolean run = true;
-			while (run) {
+			boolean isRunning = true;
+			while (isRunning) {
 				String input = scanner.nextLine();
-				run = !"Exit".equals(input);
+				isRunning = !"Exit".equals(input);
 				dos.writeUTF(input);
 
-				if (run) {
+				if (isRunning) {
 					// print what date server got
 					String received = dis.readUTF();
 					System.out.println(received);
