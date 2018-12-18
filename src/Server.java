@@ -15,6 +15,7 @@ public class Server implements Runnable {
 	private ServerSocket serverSocket;
 	private CSVReader reader;
 	private List<MeasurementPoint> measurementPoints;
+	private List<Thread> activeInputHandler;
 
 	public Server(int port) {
 
@@ -24,6 +25,7 @@ public class Server implements Runnable {
 		// server is listenin on given port
 		try {
 			this.serverSocket = new ServerSocket(port);
+			//this.serverSocket.setSoTimeout(5000);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -44,17 +46,11 @@ public class Server implements Runnable {
 				socket = serverSocket.accept();
 
 				System.out.println("A new client is connected : " + socket);
-
-				// obtaining input and out streams
-				DataInputStream dis = new DataInputStream(socket.getInputStream());
-				DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-
 				System.out.println("Assigning new thread for this client");
 				System.out.println("");
 
 				// create a new thread object
-				Thread t = new InputHandler(socket, dis, dos, measurementPoints);
-
+				Thread t = new InputHandler(socket, measurementPoints);
 				// Invoking the start() method
 				t.start();
 

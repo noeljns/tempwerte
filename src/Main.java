@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 /**
  * Main Klasse um Server zu starten
  * @author jns
@@ -8,9 +6,7 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
-		
-		Thread client = new Thread(new Client(scanner));
+		Thread client = new Thread(new Client());
 		Thread server = new Thread(new Server(5056));
 
 		server.start();

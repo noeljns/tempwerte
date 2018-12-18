@@ -5,62 +5,62 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class Client implements Runnable {
-	// gibt ein Datum an mit Hilfe von Input Klasse
-	// Datum wird an Server geschickt
-	// bekommt Response zurück
-	// oder Fehler, dass Datum nicht existiert in Datenbank
-
 	private Scanner scanner;
 
-	public Client(Scanner scanner) {
-		this.scanner = scanner;
+	public Client() {
+		this.scanner = new Scanner(System.in);
 	}
 
 	/**
 	 * Methode um Client zu starten
 	 */
 	@Override
-	public void run() {		
+	public void run() {
 		try {
 			// getting localhost ip
 			InetAddress ip = InetAddress.getByName("localhost");
 
 			// establish the connection with server port 5056
-			Socket socket = new Socket(ip, 5056);			
-			
+			Socket socket = new Socket(ip, 5056);
+
 			// obtaining input and out streams
 			DataInputStream dis = new DataInputStream(socket.getInputStream());
 			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
 
+			// Read and print info from server
+			System.out.println(dis.readUTF());
+
 			// the following loop performs the exchange of
 			// information between client and client handler
-			while (true) {
-				System.out.println(dis.readUTF());
-				String tosend = scanner.nextLine();
-				dos.writeUTF(tosend);
+			boolean run = true;
+			while (run) {
+				String input = scanner.nextLine();
+				run = !"Exit".equals(input);
+				dos.writeUTF(input);
 
-				// If client sends exit,close this connection and then break from the while loop
-				if (tosend.equals("Exit")) {
-					System.out.println("Closing this connection : " + socket);
-					socket.close();
-					System.out.println("Connection closed");
-					break;
+				if (run) {
+					// print what date server got
+					String received = dis.readUTF();
+					System.out.println(received);
+
+					// print measurement response as requested by client
+					received = dis.readUTF();
+					System.out.println(received);
 				}
-
-				// printing measurement response as requested by client
-				String received = dis.readUTF();
-				System.out.println(received);
 			}
+
+			// If client sends exit,close this connection and then break from the while loop
+			System.out.println("Closing this connection : " + socket);
 
 			// closing resources
 			scanner.close();
 			dis.close();
 			dos.close();
+			socket.close();
+			System.out.println("Connection closed");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	
 
 }

@@ -20,88 +20,78 @@ class InputHandler extends Thread {
 	private List<MeasurementPoint> measurementPoints;
 
 	// Constructor
-	public InputHandler(Socket socket, DataInputStream dis, DataOutputStream dos,
-			List<MeasurementPoint> measurementPoints) {
+	public InputHandler(Socket socket, List<MeasurementPoint> measurementPoints) throws IOException {
 		this.socket = socket;
-		this.dis = dis;
-		this.dos = dos;
+		// obtaining input and out streams
+		this.dis = new DataInputStream(socket.getInputStream());
+		this.dos = new DataOutputStream(socket.getOutputStream());
 		this.measurementPoints = measurementPoints;
 	}
 
 	@Override
 	public void run() {
-		String received;
-		LocalDate receivedDate;
-
 		// Inform user about service and ask them what they want
 		try {
 			dos.writeUTF(informAboutService());
+			dos.flush();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
 		// TODO mit boolean lösen
-		while (true) {
+		boolean run = true;
+		while (run) {
 			try {
 				// receive the answer from client
-				received = dis.readUTF();
+				String received = dis.readUTF();
 				dos.writeUTF("You asked for weather information about: " + received);
+				//dos.flush();
 
-				// validate input of client
-				receivedDate = validateInput(received);
+				run = !"Exit".equals(received);
+				
+				if (run) {
+					// validate input of client
+					LocalDate receivedDate = validateInput(received);
+					
+					if (receivedDate == null) {
+						String informAboutBadInput = ("Wrong input! It is only information available for 2018-12-01 until 2018-12-07."
+								+ System.lineSeparator() + "Enter the date in the correct format yyyy-mm-dd."
+								+ System.lineSeparator() + "Try again or type exit to terminate connection."
+								+ System.lineSeparator());
 
-				// TODO equals(null) wird eine NullPointerException
-				if (receivedDate == null) {
-					String informAboutBadInput = ("Wrong input! It is only information available for 2018-12-01 until 2018-12-07."
-							+ System.lineSeparator() + "Enter the date in the correct format yyyy-mm-dd."
-							+ System.lineSeparator() + "Try again or type exit to terminate connection."
-							+ System.lineSeparator());
+						dos.writeUTF(informAboutBadInput);
+					}
+					else {
+						// calculate measurements for given date
+						Measurement measurement = new Measurement(receivedDate, measurementPoints);
+						List<MeasurementPoint> measurementPointsForGivenDate = measurement.getMeasurementPointsForGivenDate();
+						List<Double> measurements = measurement.getMeasurements();
 
-					dos.writeUTF(informAboutBadInput);
+						// write on output stream based on the answer from the client
+						Response response = new Response(measurementPointsForGivenDate, measurements);
+						dos.writeUTF(response.getResponse() + System.lineSeparator() + System.lineSeparator()
+								+ "Next request please:");
+					}
 				}
-
-				// TODO löst Socket Exception aus
-				else if (received.equals("Exit")) {
-					System.out.println("Client " + this.socket + " sends exit...");
-					System.out.println("Closing this connection.");
-					this.socket.close();
-					System.out.println("Connection closed");
-					break;
-				}
-
-				else {
-					// calculate measurements for given date
-
-					// TEST
-					int i = 0;
-					i++;
-					System.out.println(i + ". test Mal in else Block");
-
-					Measurement measurement = null;
-					measurement = new Measurement(receivedDate, measurementPoints);
-					List<MeasurementPoint> measurementPointsForGivenDate = measurement
-							.getMeasurementPointsForGivenDate();
-					List<Double> measurements = measurement.getMeasurements();
-
-					// write on output stream based on the answer from the client
-					Response response = new Response(measurementPointsForGivenDate, measurements);
-					dos.writeUTF(response.getResponse() + System.lineSeparator() + System.lineSeparator()
-							+ "Next request please:");
-				}
-
+				dos.flush();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
+			
 			// damit bei zweiter invalider Anfrage auch Validierung stimmt
 			// receivedDate = null;
 		}
 
 		try {
+			System.out.println("Client " + this.socket + " sends exit...");
+			System.out.println("Closing this connection.");
+			
 			// closing resources
 			this.dis.close();
 			this.dos.close();
+			this.socket.close();
+			System.out.println("Connection closed");
 
 		} catch (IOException e) {
 			e.printStackTrace();

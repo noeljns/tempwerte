@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.OptionalDouble;
+import java.util.stream.Collectors;
 
 /**
  * Klasse, um für ein bestimmtes Datum bestimmte Temperaturberechnungen
@@ -13,6 +14,9 @@ import java.util.OptionalDouble;
  */
 public class Measurement {
 	private List<MeasurementPoint> measurementPointsForGivenDate;
+	private Double minimum;
+	private Double maximum;
+	private Double average;
 
 	/**
 	 * Konstruktor
@@ -24,6 +28,9 @@ public class Measurement {
 	public Measurement(LocalDate date, List<MeasurementPoint> measurementPoints) {
 		// reduziere die gespeicherten Messpunkte auf die des geforderten Datum
 		measurementPointsForGivenDate = getMeasurePointsOfDate(date, measurementPoints);
+		minimum = getMin();
+		maximum = getMax();
+		average = getAverage();
 	}
 
 	/**
@@ -34,18 +41,11 @@ public class Measurement {
 	 * @param measurementPoints
 	 * @return Liste mit Messpunkten des geforderten Datums
 	 */
-	private List<MeasurementPoint> getMeasurePointsOfDate(LocalDate date, List<MeasurementPoint> measurementPoints) {		
-		Iterator<MeasurementPoint> iterator = measurementPoints.iterator();
-		while(iterator.hasNext()) {
-			// falls gefordertes Datum nicht dem Datum in der Liste entspricht, entferne das MeasurePoint Objekt
-			if(! (iterator.next().getDate().equals(date)) ) {
-				iterator.remove();
-			}
-		
-		}
-				
+	private List<MeasurementPoint> getMeasurePointsOfDate(LocalDate date, List<MeasurementPoint> measurementPoints) {
 		// Liste die nur noch MeasurePoint des geforderten Datums entspricht
-		return measurementPoints;
+		return measurementPoints.stream()
+			.filter(mp -> mp.getDate().equals(date))
+			.collect(Collectors.toList());
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class Measurement {
 	 * 
 	 * @return Messpunkte des Tages
 	 */
-	public List<MeasurementPoint> getMeasurementPointsForGivenDate() {		
+	public List<MeasurementPoint> getMeasurementPointsForGivenDate() {
 		return this.measurementPointsForGivenDate;
 	}
 	
@@ -66,32 +66,32 @@ public class Measurement {
 	public List<Double> getMeasurements() {
 		List<Double> measurement = new ArrayList<Double>();
 
-		measurement.add(getMin());
-		measurement.add(getMax());
-		measurement.add(getAverage());
+		measurement.add(minimum);
+		measurement.add(maximum);
+		measurement.add(average);
 
 		return measurement;
 	}
 
 	private Double getMin() {
-		OptionalDouble minOptional = measurementPointsForGivenDate.stream().mapToDouble(mp -> mp.getTemperature())
-				.min();
-		Double min = minOptional.getAsDouble();
-		return min;
+		return measurementPointsForGivenDate.stream()
+				.mapToDouble(mp -> mp.getTemperature())
+				.min()
+				.getAsDouble();
 	}
 
 	private Double getMax() {
-		OptionalDouble maxOptional = measurementPointsForGivenDate.stream().mapToDouble(mp -> mp.getTemperature())
-				.max();
-		Double max = maxOptional.getAsDouble();
-		return max;
+		return measurementPointsForGivenDate.stream()
+				.mapToDouble(mp -> mp.getTemperature())
+				.max()
+				.getAsDouble();
 	}
 
 	private Double getAverage() {
-		OptionalDouble averageOptional = measurementPointsForGivenDate.stream().mapToDouble(mp -> mp.getTemperature())
-				.average();
-		Double average = averageOptional.getAsDouble();
-		return average;
+		return measurementPointsForGivenDate.stream()
+				.mapToDouble(mp -> mp.getTemperature())
+				.average()
+				.getAsDouble();
 	}
 
 }
